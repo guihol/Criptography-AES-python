@@ -1,0 +1,57 @@
+
+from Crypto.Cipher import AES
+def padding(str):
+    while(len(str) % 16 != 0):
+        str+=b'\0'
+    return str
+
+def encryptor(keyb):
+    IV = 16 * b'\x00'
+    mode = AES.MODE_CBC
+    encryptor = AES.new(keyb, mode, IV=IV)
+    filename = input("digite o nome do arquivo q vc quer encriptografar")
+    f = open(filename, "rb")
+    filedata = f.read();
+    textb2 = padding(filedata)
+    ciphertext = encryptor.encrypt(textb2)
+    # Escrevendo no arquivo
+    f = open(filename + ".enc", "wb")
+    f.write(ciphertext)
+    f.close()
+    return ciphertext
+
+
+def decryptor (keyb):
+    IV = 16 * b'\x00'
+    mode = AES.MODE_CBC
+    filename = input("digite o nome do arquivo q vc quer decriptografar")
+    f = open(filename, "rb")
+    encryptedtext = f.read();
+
+    decryptor = AES.new(keyb, mode, IV=IV)
+    decrypedtext = decryptor.decrypt(encryptedtext)
+    print("Texto encripitado:", encryptedtext)
+    print("Texto decripitado:", decrypedtext)
+
+    """o .decode(utf-8) serve para converter o texto em um encode legivel"""
+    f = open(filename+".dec", "wb")
+    f.write(decrypedtext)
+    f.close()
+    return
+
+
+def main():
+    print("vc deseja encriptar ou descriptografar")
+    entrada = input("encriptograr/descriptografar(e/d)")
+    generatekey = str(input("digite uma chave de 16 caracteres sendo eles letras ou numeros"))
+    keyb = generatekey.encode()
+    if (entrada == "e"):
+        encryptor(keyb)
+    else:
+        decryptor( keyb)
+
+    return
+
+
+if __name__ == "__main__":
+    main()
